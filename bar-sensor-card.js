@@ -73,6 +73,7 @@ class BarSensorCard extends LitElement {
     const infoStyle = {}
     infoStyle["flex-direction"] = show_value_inline ? "row" : "column";
     infoStyle["justify-content"] = show_value_inline ? "space-between" : "center";
+    infoStyle["align-items"] = show_value_inline ? "center" : "flex-start";
     const secondaryStyle = {}
     secondaryStyle["font-size"] = `${show_value_inline ? VALUE_FONT_SIZE_ROW: VALUE_FONT_SIZE_COLUMN}px`
     return html`
@@ -169,7 +170,7 @@ class BarSensorCard extends LitElement {
       bar_color_key = "var(--rgb-disabled)"
     } 
         
-    const stateHtml = this._render_state(this.config?.title || entity.attributes?.name, display_value, unit, this.config.show_value_inline)
+    const stateHtml = this._render_state(this.config?.title || entity.attributes?.friendly_name, display_value, unit, this.config.show_value_inline)
 
     let iconHtml
     if (show_icon) {
