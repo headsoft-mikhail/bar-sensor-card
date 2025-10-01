@@ -191,14 +191,14 @@ class BarSensorCard extends LitElement {
         current_percent, 
         bar_color, 
         bar_position,
-        this.config?.bar_height || DEFAULT_BOTTOM_BAR_HEIGHT, 
+        this.config?.bar_height || MAX_RIGHT_BAR_HEIGHT, 
         this.config?.bar_border_radius || DEFAULT_BAR_BORDER_RADIUS,
       );      
       bottomBarHtml = this._render_bottom_bar(
         current_percent, 
         bar_color, 
         bar_position,
-        this.config?.bar_height || MAX_RIGHT_BAR_HEIGHT, 
+        this.config?.bar_height || DEFAULT_BOTTOM_BAR_HEIGHT, 
         this.config?.bar_border_radius || DEFAULT_BAR_BORDER_RADIUS,
       );
     } else {
@@ -278,7 +278,7 @@ class BarSensorCard extends LitElement {
         flex: 1;
         min-width: 0;
       }
-      .primary {
+      .info .primary {
         font-size: 14px;
         font-weight: 600;
         line-height: 20px;
@@ -287,7 +287,7 @@ class BarSensorCard extends LitElement {
         text-overflow: ellipsis;
         color: var(--primary-text-color, #fff);
       }
-      .secondary {
+      .info .secondary {
         line-height: 15px;
         color: var(--primary-text-color, #fff);
         padding: 0 4px 0 0;

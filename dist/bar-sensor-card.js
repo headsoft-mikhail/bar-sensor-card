@@ -303,14 +303,14 @@ class BarSensorCard extends LitElement {
         current_percent, 
         bar_color, 
         bar_position,
-        this.config?.bar_height || DEFAULT_BOTTOM_BAR_HEIGHT, 
+        this.config?.bar_height || MAX_RIGHT_BAR_HEIGHT, 
         this.config?.bar_border_radius || DEFAULT_BAR_BORDER_RADIUS,
       );      
       bottomBarHtml = this._render_bottom_bar(
         current_percent, 
         bar_color, 
         bar_position,
-        this.config?.bar_height || MAX_RIGHT_BAR_HEIGHT, 
+        this.config?.bar_height || DEFAULT_BOTTOM_BAR_HEIGHT, 
         this.config?.bar_border_radius || DEFAULT_BAR_BORDER_RADIUS,
       );
     } else {
