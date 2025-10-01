@@ -389,17 +389,18 @@ class BarSensorCard extends LitElement {
         flex: 1 1 auto;
         min-width: 0;
         overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
       }
       .info .primary {
+        display: block;
         font-size: 14px;
         font-weight: 600;
         line-height: 20px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
         color: var(--primary-text-color, #fff);
       }
       .info .secondary {
+        display: block;
         line-height: 15px;
         color: var(--primary-text-color, #fff);
         padding: 0 4px 0 0;
