@@ -1,5 +1,7 @@
 {
   "name": "Bar Sensor Card",
-  "filename": "dist/bar-sensor-card.js",
-  "render_readme": true
+  "content_in_root": false,
+  "filename": "bar-sensor-card.js",
+  "folder": "bar-sensor-card",
+  "codeowners": ["@headsoft-mikhail"]
 }
