@@ -280,7 +280,7 @@ class BarSensorCard extends LitElement {
         min-width: 0;                  
       }
       .info .primary {
-        flex-shrink: 1;            
+        flex: 1 1 auto;              
         overflow: hidden;          
         text-overflow: ellipsis;   
         white-space: nowrap;       
@@ -290,7 +290,7 @@ class BarSensorCard extends LitElement {
         color: var(--primary-text-color, #fff);
       }
       .info .secondary {
-        flex-shrink: 0;              
+        flex: 0 0 auto;                
         line-height: 15px;
         color: var(--primary-text-color, #fff);
         padding: 0 4px 0 0;
