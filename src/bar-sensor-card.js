@@ -207,8 +207,8 @@ class BarSensorCard extends LitElement {
     }
 
     return html`
-      <ha-card class="bar-sensor-card">
-        <div class="content" @click=${() => this._handleBarClick(this.config?.entity)}>
+      <ha-card class="bar-sensor-card" @click=${() => this._handleBarClick(this.config?.entity)}>
+        <div class="content">
           ${iconHtml}
           ${stateHtml}
           ${rightBarHtml}
