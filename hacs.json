@@ -1,0 +1,6 @@
+{
+  "name": "Bar Sensor Card",
+  "content_in_root": true,
+  "filename": "bar-sensor-card.js",
+  "render_readme": true
+}
