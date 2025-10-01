@@ -279,9 +279,8 @@ class BarSensorCard extends LitElement {
         flex: 1 1 0;               
         min-width: 0;              
         overflow: hidden;   
-        gap: 2px;       
+        gap: 4px;       
       }
-
       .info .primary {
         flex: 1 1 auto;            
         overflow: hidden;          
