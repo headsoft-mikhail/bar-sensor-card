@@ -1,0 +1,24 @@
+{
+  "name": "bar-sensor-card",
+  "version": "1.0.0",
+  "description": "Custom Lovelace card for Home Assistant that combines a sensor icon, title, value, and a dynamic progress bar.   The card supports **dynamic colors**, configurable bar position (bottom or right), inline value display, and flexible styling.   Inspired by Mushroom-style cards.",
+  "main": "rollup.config.js",
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/headsoft-mikhail/bar-sensor-card.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/headsoft-mikhail/bar-sensor-card/issues"
+  },
+  "homepage": "https://github.com/headsoft-mikhail/bar-sensor-card#readme",
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "rollup": "^4.52.3"
+  }
+}

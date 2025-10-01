@@ -15,10 +15,8 @@ Inspired by Mushroom-style cards.
 4. Install and add the resource to your dashboard configuration.
 
 ### Manual
-1. Download the following files and place them in the same directory inside your `www/` folder:
-   - `bar-sensor-card.js`
-   - `constants.js`
-   - `utils.js`
+1. Download the following files and place them inside your `www/` folder:
+   - `dist/bar-sensor-card.js`
 2. Add the resource to your `configuration.yaml` or Lovelace resources:
 
 ```yaml
