@@ -362,12 +362,14 @@ class BarSensorCard extends LitElement {
         --rgb-white: 255, 255, 255;
         --rgb-disabled: 189, 189, 189;
       }
+      .bar-sensor-card {
+        cursor: pointer;
+      }
       .bar-sensor-card .content {
         display: flex;
         align-items: center;
         gap: 10px;
         padding: 10px 10px;
-        cursor: pointer;
       }
       .icon-wrapper {
         width: 37px;
@@ -400,7 +402,7 @@ class BarSensorCard extends LitElement {
         color: var(--primary-text-color, #fff);
       }
       .info .secondary {
-        display: block;
+        display: inline-block;
         line-height: 15px;
         color: var(--primary-text-color, #fff);
         padding: 0 4px 0 0;
