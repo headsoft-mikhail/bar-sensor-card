@@ -419,10 +419,12 @@ class BarSensorCard extends LitElement {
       .bar-container {
         overflow: hidden;
         width: 100%;
+        pointer-events: none;
       }
       .bar-filler {
         height: 100%;
         transition: width 0.4s ease;
+        pointer-events: none;
       }
   `;
   }
