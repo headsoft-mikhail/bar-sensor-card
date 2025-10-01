@@ -275,25 +275,27 @@ class BarSensorCard extends LitElement {
         height: 24px;
       }
       .info {
-        display: flex;
-        flex: 1 1 auto;
-        min-width: 0;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
+        display: flex;   
+        flex: 1 1 0;               
+        min-width: 0;              
+        overflow: hidden;          
       }
+
       .info .primary {
-        display: block;
+        flex-shrink: 1;            
+        overflow: hidden;          
+        text-overflow: ellipsis;   
+        white-space: nowrap;       
         font-size: 14px;
         font-weight: 600;
         line-height: 20px;
         color: var(--primary-text-color, #fff);
       }
       .info .secondary {
-        display: inline-block;
+        flex-shrink: 0;            
+        margin-left: 4px;          
         line-height: 15px;
         color: var(--primary-text-color, #fff);
-        padding: 0 4px 0 0;
       }
       .bottom-bar-wrapper {
         padding: 0px 12px 12px 12px
