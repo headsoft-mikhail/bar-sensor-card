@@ -22,6 +22,9 @@ const BP_BOTTOM = "bottom";
 const BP_RIGHT = "right";
 const BAR_POSITIONS = [BP_BOTTOM, BP_RIGHT];
 
+const AT_MORE_INFO = "more-info";
+const AT_PERFORM_ACTION = "perform-action";
+
 const DEFAULT_MIN_VALUE = 0; 
 const DEFAULT_MAX_VALUE = 100;
 const DEFAULT_DECIMALS = 2;
@@ -30,6 +33,80 @@ const DEFAULT_BOTTOM_BAR_HEIGHT = 42;
 const DEFAULT_BAR_BORDER_RADIUS = 12;
 const VALUE_FONT_SIZE_ROW = 14;
 const VALUE_FONT_SIZE_COLUMN = 12;
+
+const handleAction = (node, hass, config, actionType) => {
+  if (!config) return;
+
+  const actionConfig = actionType === "tap" 
+  ? config.tap_action || { action: AT_MORE_INFO } 
+  : config.hold_action;
+  if (!actionConfig) return;
+
+  const { action } = actionConfig;
+
+  switch (action) {
+    case AT_MORE_INFO: {
+      const entityId = actionConfig.entity || config.entity;
+      node.dispatchEvent(new CustomEvent("hass-more-info", {
+        detail: { entityId },
+        bubbles: true,
+        composed: true,
+      }));
+      break;
+    }
+    case AT_PERFORM_ACTION: {
+      if (!hass || !actionConfig.perform_action) return;
+      const [domain, service] = actionConfig.perform_action.split(".");
+      hass.callService(domain, service, actionConfig.target || {});
+      break;
+    }
+    default:
+      return;
+  }
+};
+
+const actionHandler = (node, hass, config) => {
+  if (!node) return;
+
+  let holdTimeout;
+  let held = false;
+  const holdTime = config.hold_time ?? 500;
+
+  const start = () => {
+    if (!config.hold_action) return;
+    held = false;
+    holdTimeout = setTimeout(() => {
+      handleAction(node, hass, config, "hold");
+      held = true;
+    }, holdTime);
+  };
+
+  const clear = () => {
+    if (holdTimeout) {
+      clearTimeout(holdTimeout);
+      holdTimeout = null;
+    }
+  };
+
+  node.addEventListener("mousedown", start);
+  node.addEventListener("mouseup", () => {
+    clear();
+    if (!held) {
+      handleAction(node, hass, config, "tap");
+    }
+  });
+  node.addEventListener("mouseleave", clear);
+
+  node.addEventListener("touchstart", start);
+  node.addEventListener("touchend", (ev) => {
+    clear();
+    if (!held) {
+      handleAction(node, hass, config, "tap");
+    }
+    ev.preventDefault();
+  });
+  node.addEventListener("touchcancel", clear);
+};
 
 function isActiveState(state) {
   if (["unavailable", "unknown", "off"].includes(state)) {
@@ -104,7 +181,6 @@ function getDisplayUnit(u) {
   return " " + u
 }
 
-
 function selectSensorIcon(device_class, current_percent) {
   switch (device_class) {
     case "battery":
@@ -162,13 +238,8 @@ class BarSensorCard extends LitElement {
     this.requestUpdate();
   }
 
-  _handleBarClick(entity) {
-    const e = new CustomEvent("hass-more-info", {
-      detail: { entityId: entity },
-      bubbles: true,
-      composed: true,
-    });
-    this.dispatchEvent(e);
+  firstUpdated() {
+    actionHandler(this.renderRoot.querySelector("#cardRoot"), this._hass, this.config);
   }
 
   _render_icon(icon, color) {
@@ -176,19 +247,20 @@ class BarSensorCard extends LitElement {
     iconStyle["color"] = `rgb(${color})`;
     iconStyle["background-color"] = `rgba(${color}, 0.2)`;
     return html`
-    <div class="icon-wrapper" style=${styleMap(iconStyle)}>
-      <ha-icon .icon=${icon}></ha-icon>
-    </div>`;
+      <div class="icon-wrapper" style=${styleMap(iconStyle)}>
+        <ha-icon .icon=${icon}></ha-icon>
+      </div>
+    `;
   }
 
-  _render_state(title, value, unit, show_value_inline) { 
+  _render_state(title, value, unit, show_value_inline) {
     const infoStyle = {};
     infoStyle["flex-direction"] = show_value_inline ? "row" : "column";
     infoStyle["justify-content"] = show_value_inline ? "space-between" : "center";
-    infoStyle["align-items"] = show_value_inline ? "center" : "flex-start";   
+    infoStyle["align-items"] = show_value_inline ? "center" : "flex-start";
     if (show_value_inline) {
-      infoStyle["width"] =  "100%"; 
-    }        
+      infoStyle["width"] = "100%";
+    }
     const secondaryStyle = {};
     secondaryStyle["font-size"] = `${show_value_inline ? VALUE_FONT_SIZE_ROW: VALUE_FONT_SIZE_COLUMN}px`;
     secondaryStyle["padding"] = show_value_inline ? "0 4px 0 4px" : "0 0 0 0";          
@@ -196,42 +268,39 @@ class BarSensorCard extends LitElement {
       <div class="info" style=${styleMap(infoStyle)}>
         <span class="primary">${title}</span>
         <span class="secondary" style=${styleMap(secondaryStyle)}>${value}${unit}</span>
-      </div>`;
+      </div>
+    `;
   }
 
   _render_right_bar(percent, color, position, height, border_radius) {
-    if (position!=BP_RIGHT) {
-      return html``
-    }
+    if (position != BP_RIGHT) return html``;
 
-    const barContainerStyle = {}; 
-    barContainerStyle["background-color"] = `rgba(${color}, 0.2)`; 
+    const barContainerStyle = {};
+    barContainerStyle["background-color"] = `rgba(${color}, 0.2)`;
     barContainerStyle["height"] = `${Math.min(MAX_RIGHT_BAR_HEIGHT, height)}px`;
     barContainerStyle["width"] = `100%`;
     barContainerStyle["border-radius"] = `${border_radius}px`;
-    const barStyle = {}; 
+    const barStyle = {};
     barStyle["background-color"] = `rgb(${color})`;
     barStyle["width"] = `${percent}%`;
     return html`
-    <div class="right-bar-wrapper">
-      <div class="bar-container" style=${styleMap(barContainerStyle)}>
-        <div class="bar-filler" style=${styleMap(barStyle)}>
+      <div class="right-bar-wrapper">
+        <div class="bar-container" style=${styleMap(barContainerStyle)}>
+          <div class="bar-filler" style=${styleMap(barStyle)}>
+          </div>
         </div>
       </div>
-    </div>
     `;
   }
 
   _render_bottom_bar(percent, color, position, height, border_radius) {
-    if (position!=BP_BOTTOM) {
-      return html``;
-    }
+    if (position != BP_BOTTOM) return html``;
 
-    const barContainerStyle = {}; 
-    barContainerStyle["background-color"] = `rgba(${color}, 0.2)`; 
+    const barContainerStyle = {};
+    barContainerStyle["background-color"] = `rgba(${color}, 0.2)`;
     barContainerStyle["height"] = `${height}px`;
     barContainerStyle["border-radius"] = `${border_radius}px`;
-    const barStyle = {}; 
+    const barStyle = {};
     barStyle["background-color"] = `rgb(${color})`;
     barStyle["width"] = `${percent}%`;
     return html`
@@ -243,7 +312,6 @@ class BarSensorCard extends LitElement {
       </div>
     `;
   }
-
 
   render() {
     if (!this._hass || !this.config) return html``;
@@ -275,7 +343,7 @@ class BarSensorCard extends LitElement {
 
       const enable_dynamic_icon_color = !!this.config?.enable_dynamic_icon_color;
       icon_color_key = enable_dynamic_icon_color ? dynamic_color_key : this.config?.icon_color || this.config?.color || "var(--rgb-accent-color)";
-      
+
       const enable_dynamic_bar_color = !!this.config?.enable_dynamic_bar_color;
       bar_color_key = enable_dynamic_bar_color ? dynamic_color_key : this.config?.bar_color || this.config?.color || "var(--rgb-accent-color)";
     } else {
@@ -284,8 +352,8 @@ class BarSensorCard extends LitElement {
       current_percent = 0;
       icon_color_key = "var(--rgb-disabled)";
       bar_color_key = "var(--rgb-disabled)";
-    } 
-        
+    }
+
     const stateHtml = this._render_state(this.config?.title || entity.attributes?.friendly_name, display_value, unit, this.config.show_value_inline);
 
     let iconHtml;
@@ -300,27 +368,26 @@ class BarSensorCard extends LitElement {
     let rightBarHtml;
     let bottomBarHtml;
     const contentStyle = {};
-    
-    if (show_bar) {
 
+    if (show_bar) {
       const bar_color = computeRgbColor(bar_color_key);
       const bar_position = BAR_POSITIONS.includes(this.config?.bar_position)? this.config?.bar_position: BP_BOTTOM;
       if (bar_position==BP_RIGHT) {
         contentStyle["justify-content"] = "space-between";
       }
       rightBarHtml = this._render_right_bar(
-        current_percent, 
-        bar_color, 
+        current_percent,
+        bar_color,
         bar_position,
-        this.config?.bar_height || MAX_RIGHT_BAR_HEIGHT, 
-        this.config?.bar_border_radius || DEFAULT_BAR_BORDER_RADIUS,
-      );      
+        this.config?.bar_height || MAX_RIGHT_BAR_HEIGHT,
+        this.config?.bar_border_radius || DEFAULT_BAR_BORDER_RADIUS
+      );
       bottomBarHtml = this._render_bottom_bar(
-        current_percent, 
-        bar_color, 
+        current_percent,
+        bar_color,
         bar_position,
-        this.config?.bar_height || DEFAULT_BOTTOM_BAR_HEIGHT, 
-        this.config?.bar_border_radius || DEFAULT_BAR_BORDER_RADIUS,
+        this.config?.bar_height || DEFAULT_BOTTOM_BAR_HEIGHT,
+        this.config?.bar_border_radius || DEFAULT_BAR_BORDER_RADIUS
       );
     } else {
       rightBarHtml = "";
@@ -328,7 +395,7 @@ class BarSensorCard extends LitElement {
     }
 
     return html`
-      <ha-card class="bar-sensor-card" @click=${() => this._handleBarClick(this.config?.entity)}>
+      <ha-card class="bar-sensor-card" id="cardRoot">
         <div class="content" style="${styleMap(contentStyle)}">
           ${iconHtml}
           ${stateHtml}
@@ -395,26 +462,26 @@ class BarSensorCard extends LitElement {
         height: 24px;
       }
       .info {
-        display: flex;                
-        min-width: 0;           
+        display: flex;
+        min-width: 0;
       }
-      .info .primary {            
-        max-width: 100%;            
-        overflow: hidden;          
-        text-overflow: ellipsis;   
-        white-space: nowrap;       
+      .info .primary {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
         font-size: 14px;
         font-weight: 600;
         line-height: 20px;
         color: var(--primary-text-color, #fff);
       }
       .info .secondary {
-        flex: 0 0 auto;                
+        flex: 0 0 auto;
         line-height: 15px;
         color: var(--primary-text-color, #fff);
       }
       .bottom-bar-wrapper {
-        padding: 0px 12px 12px 12px
+        padding: 0px 12px 12px 12px;
       }
       .right-bar-wrapper {
         flex: 1;
@@ -432,10 +499,9 @@ class BarSensorCard extends LitElement {
         transition: width 0.4s ease;
         pointer-events: none;
       }
-  `;
+    `;
   }
 }
-
 
 if (!customElements.get("bar-sensor-card")) {
   customElements.define("bar-sensor-card", BarSensorCard);
@@ -443,7 +509,7 @@ if (!customElements.get("bar-sensor-card")) {
 
 (window).customCards = (window).customCards || [];
 (window).customCards.push({
-  type: 'bar-sensor-card',
-  name: 'Bar Sensor Card',
-  description: 'Custom mushroom-like sensor card with dynamic colored icon and bar',
+  type: "bar-sensor-card",
+  name: "Bar Sensor Card",
+  description: "Custom mushroom-like sensor card with dynamic colored icon and bar",
 });
