@@ -111,7 +111,7 @@ function selectSensorIcon(device_class, current_percent) {
       if (isNaN(current_percent) || current_percent < 0) return "mdi:battery-unknown";
       if (current_percent <= 5) return "mdi:battery-outline";
       if (current_percent >= 100) return "mdi:battery"; 
-      return `mdi:battery-${Math.floor(v / 10) * 10}`;
+      return `mdi:battery-${Math.floor(current_percent / 10) * 10}`;
     case "temperature":
       return "mdi:thermometer";
     case "humidity":
