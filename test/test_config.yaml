@@ -1,0 +1,198 @@
+  - type: masonry
+    title: test
+    path: test
+    sections: []
+    layout: {}
+    cards:
+      - square: false
+        type: grid
+        cards:
+          - type: custom:bar-sensor-card
+            entity: sensor.luminance_sensor_illuminance
+            color: light-blue
+            enable_dynamic_bar_color: true
+            title: Sh
+          - type: custom:bar-sensor-card
+            entity: sensor.luminance_sensor_illuminance
+            color: light-blue
+            enable_dynamic_bar_color: true
+            title: Very-very-very long title for test
+          - type: custom:bar-sensor-card
+            entity: sensor.luminance_sensor_illuminance
+            color: light-blue
+            enable_dynamic_bar_color: true
+            title: Sh
+            show_value_inline: true
+          - type: custom:bar-sensor-card
+            entity: sensor.luminance_sensor_illuminance
+            color: light-blue
+            enable_dynamic_bar_color: true
+            title: Very-very-very long title for test
+            show_value_inline: true
+          - type: custom:bar-sensor-card
+            entity: sensor.luminance_sensor_illuminance
+            color: light-blue
+            enable_dynamic_bar_color: true
+            title: Sh
+            bar_position: right
+          - type: custom:bar-sensor-card
+            entity: sensor.luminance_sensor_illuminance
+            color: light-blue
+            enable_dynamic_bar_color: true
+            title: Very-very-very long title for test
+            bar_position: right
+          - type: custom:bar-sensor-card
+            entity: sensor.luminance_sensor_illuminance
+            color: light-blue
+            enable_dynamic_bar_color: true
+            title: Sh
+            show_value_inline: true
+            bar_position: right
+          - type: custom:bar-sensor-card
+            entity: sensor.luminance_sensor_illuminance
+            color: light-blue
+            enable_dynamic_bar_color: true
+            title: Very-very-very long title for test
+            show_value_inline: true
+            bar_position: right
+        columns: 2
+        title: Test mode=both
+      - square: false
+        type: grid
+        cards:
+          - type: custom:bar-sensor-card
+            entity: sensor.luminance_sensor_illuminance
+            color: light-blue
+            enable_dynamic_bar_color: true
+            title: Sh
+            display_mode: bar
+            bar_height: 14
+          - type: custom:bar-sensor-card
+            entity: sensor.luminance_sensor_illuminance
+            color: light-blue
+            enable_dynamic_bar_color: true
+            title: Very-very-very long title for test
+            display_mode: bar
+            bar_height: 14
+          - type: custom:bar-sensor-card
+            entity: sensor.luminance_sensor_illuminance
+            color: light-blue
+            enable_dynamic_bar_color: true
+            title: Sh
+            show_value_inline: true
+            display_mode: bar
+            bar_height: 14
+          - type: custom:bar-sensor-card
+            entity: sensor.luminance_sensor_illuminance
+            color: light-blue
+            enable_dynamic_bar_color: true
+            title: Very-very-very long title for test
+            show_value_inline: true
+            display_mode: bar
+            bar_height: 14
+          - type: custom:bar-sensor-card
+            entity: sensor.luminance_sensor_illuminance
+            color: light-blue
+            enable_dynamic_bar_color: true
+            title: Sh
+            bar_position: right
+            display_mode: bar
+            bar_height: 14
+          - type: custom:bar-sensor-card
+            entity: sensor.luminance_sensor_illuminance
+            color: light-blue
+            enable_dynamic_bar_color: true
+            title: Very-very-very long title for test
+            bar_position: right
+            display_mode: bar
+            bar_height: 14
+          - type: custom:bar-sensor-card
+            entity: sensor.luminance_sensor_illuminance
+            color: light-blue
+            enable_dynamic_bar_color: true
+            title: Sh
+            show_value_inline: true
+            bar_position: right
+            display_mode: bar
+            bar_height: 14
+          - type: custom:bar-sensor-card
+            entity: sensor.luminance_sensor_illuminance
+            color: light-blue
+            enable_dynamic_bar_color: true
+            title: Very-very-very long title for test
+            show_value_inline: true
+            bar_position: right
+            display_mode: bar
+            bar_height: 14
+        columns: 2
+        title: Test mode = bar
+      - square: false
+        type: grid
+        cards:
+          - type: custom:bar-sensor-card
+            entity: sensor.luminance_sensor_illuminance
+            color: light-blue
+            enable_dynamic_icon_color: true
+            title: Short
+            display_mode: icon
+            bar_height: 14
+          - type: custom:bar-sensor-card
+            entity: sensor.luminance_sensor_illuminance
+            color: light-blue
+            enable_dynamic_icon_color: true
+            title: Very-very-very long title for test
+            display_mode: icon
+            bar_height: 14
+          - type: custom:bar-sensor-card
+            entity: sensor.luminance_sensor_illuminance
+            color: light-blue
+            enable_dynamic_icon_color: true
+            title: Short
+            show_value_inline: true
+            display_mode: icon
+            bar_height: 14
+          - type: custom:bar-sensor-card
+            entity: sensor.luminance_sensor_illuminance
+            color: light-blue
+            enable_dynamic_icon_color: true
+            title: Very-very-very long title for test
+            show_value_inline: true
+            display_mode: icon
+            bar_height: 14
+          - type: custom:bar-sensor-card
+            entity: sensor.luminance_sensor_illuminance
+            color: light-blue
+            enable_dynamic_icon_color: true
+            title: Short
+            bar_position: right
+            display_mode: icon
+            bar_height: 14
+          - type: custom:bar-sensor-card
+            entity: sensor.luminance_sensor_illuminance
+            color: light-blue
+            enable_dynamic_icon_color: true
+            title: Very-very-very long title for test
+            bar_position: right
+            display_mode: icon
+            bar_height: 14
+          - type: custom:bar-sensor-card
+            entity: sensor.luminance_sensor_illuminance
+            color: light-blue
+            enable_dynamic_icon_color: true
+            title: Short
+            show_value_inline: true
+            bar_position: right
+            display_mode: icon
+            bar_height: 14
+          - type: custom:bar-sensor-card
+            entity: sensor.luminance_sensor_illuminance
+            color: light-blue
+            enable_dynamic_bar_color: true
+            enable_dynamic_icon_color: true
+            title: Very-very-very long title for test
+            show_value_inline: true
+            bar_position: right
+            display_mode: icon
+            bar_height: 14
+        columns: 2
+        title: Test mode = icon
