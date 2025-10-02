@@ -173,8 +173,8 @@ class BarSensorCard extends LitElement {
 
   _render_icon(icon, color) {
     const iconStyle = {};
-    iconStyle["--icon-color"] = `rgb(${color})`;
-    iconStyle["--shape-color"] = `rgba(${color}, 0.2)`;
+    iconStyle["color"] = `rgb(${color})`;
+    iconStyle["background-color"] = `rgba(${color}, 0.2)`;
     return html`
     <div class="icon-wrapper" style=${styleMap(iconStyle)}>
       <ha-icon .icon=${icon}></ha-icon>
@@ -185,9 +185,13 @@ class BarSensorCard extends LitElement {
     const infoStyle = {};
     infoStyle["flex-direction"] = show_value_inline ? "row" : "column";
     infoStyle["justify-content"] = show_value_inline ? "space-between" : "center";
-    infoStyle["align-items"] = show_value_inline ? "center" : "flex-start";
+    infoStyle["align-items"] = show_value_inline ? "center" : "flex-start";   
+    if (show_value_inline) {
+      infoStyle["width"] =  "100%"; 
+    }        
     const secondaryStyle = {};
     secondaryStyle["font-size"] = `${show_value_inline ? VALUE_FONT_SIZE_ROW: VALUE_FONT_SIZE_COLUMN}px`;
+    secondaryStyle["padding"] = show_value_inline ? "0 4px 0 4px" : "0 0 0 0";          
     return html`
       <div class="info" style=${styleMap(infoStyle)}>
         <span class="primary">${title}</span>
@@ -295,10 +299,15 @@ class BarSensorCard extends LitElement {
 
     let rightBarHtml;
     let bottomBarHtml;
+    const contentStyle = {};
     
     if (show_bar) {
+
       const bar_color = computeRgbColor(bar_color_key);
       const bar_position = BAR_POSITIONS.includes(this.config?.bar_position)? this.config?.bar_position: BP_BOTTOM;
+      if (bar_position==BP_RIGHT) {
+        contentStyle["justify-content"] = "space-between";
+      }
       rightBarHtml = this._render_right_bar(
         current_percent, 
         bar_color, 
@@ -320,7 +329,7 @@ class BarSensorCard extends LitElement {
 
     return html`
       <ha-card class="bar-sensor-card" @click=${() => this._handleBarClick(this.config?.entity)}>
-        <div class="content">
+        <div class="content" style="${styleMap(contentStyle)}">
           ${iconHtml}
           ${stateHtml}
           ${rightBarHtml}
@@ -377,24 +386,20 @@ class BarSensorCard extends LitElement {
         height: 37px;
         border-radius: 50%;
         display: flex;
+        flex-shrink: 0;
         align-items: center;
         justify-content: center;
-        background-color: var(--shape-color);
-        flex-shrink: 0;
       }
       .icon-wrapper ha-icon {
-        color: var(--icon-color);
         width: 24px;
         height: 24px;
       }
       .info {
-        display: flex;   
-        flex: 1 1 0;               
-        min-width: 0;                  
+        display: flex;                
+        min-width: 0;           
       }
-      .info .primary {
-        flex: 1 1 auto;               
-        min-width: 0;             
+      .info .primary {            
+        max-width: 100%;            
         overflow: hidden;          
         text-overflow: ellipsis;   
         white-space: nowrap;       
@@ -407,7 +412,6 @@ class BarSensorCard extends LitElement {
         flex: 0 0 auto;                
         line-height: 15px;
         color: var(--primary-text-color, #fff);
-        padding: 0 4px 0 0;
       }
       .bottom-bar-wrapper {
         padding: 0px 12px 12px 12px
@@ -415,8 +419,8 @@ class BarSensorCard extends LitElement {
       .right-bar-wrapper {
         flex: 1;
         min-width: 50%;
+        max-width: 50%;
         display: flex;
-        align-items: center;
       }
       .bar-container {
         overflow: hidden;

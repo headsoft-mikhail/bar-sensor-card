@@ -61,8 +61,8 @@ class BarSensorCard extends LitElement {
 
   _render_icon(icon, color) {
     const iconStyle = {};
-    iconStyle["--icon-color"] = `rgb(${color})`;
-    iconStyle["--shape-color"] = `rgba(${color}, 0.2)`;
+    iconStyle["color"] = `rgb(${color})`;
+    iconStyle["background-color"] = `rgba(${color}, 0.2)`;
     return html`
     <div class="icon-wrapper" style=${styleMap(iconStyle)}>
       <ha-icon .icon=${icon}></ha-icon>
@@ -70,12 +70,16 @@ class BarSensorCard extends LitElement {
   }
 
   _render_state(title, value, unit, show_value_inline) { 
-    const infoStyle = {}
+    const infoStyle = {};
     infoStyle["flex-direction"] = show_value_inline ? "row" : "column";
     infoStyle["justify-content"] = show_value_inline ? "space-between" : "center";
-    infoStyle["align-items"] = show_value_inline ? "center" : "flex-start";
-    const secondaryStyle = {}
-    secondaryStyle["font-size"] = `${show_value_inline ? VALUE_FONT_SIZE_ROW: VALUE_FONT_SIZE_COLUMN}px`
+    infoStyle["align-items"] = show_value_inline ? "center" : "flex-start";   
+    if (show_value_inline) {
+      infoStyle["width"] =  "100%"; 
+    }        
+    const secondaryStyle = {};
+    secondaryStyle["font-size"] = `${show_value_inline ? VALUE_FONT_SIZE_ROW: VALUE_FONT_SIZE_COLUMN}px`;
+    secondaryStyle["padding"] = show_value_inline ? "0 4px 0 4px" : "0 0 0 0"          
     return html`
       <div class="info" style=${styleMap(infoStyle)}>
         <span class="primary">${title}</span>
@@ -88,12 +92,12 @@ class BarSensorCard extends LitElement {
       return html``
     }
 
-    const barContainerStyle = {} 
+    const barContainerStyle = {}; 
     barContainerStyle["background-color"] = `rgba(${color}, 0.2)`; 
-    barContainerStyle["height"] = `${Math.min(MAX_RIGHT_BAR_HEIGHT, height)}px`
-    barContainerStyle["width"] = `100%`
-    barContainerStyle["border-radius"] = `${border_radius}px`
-    const barStyle = {} 
+    barContainerStyle["height"] = `${Math.min(MAX_RIGHT_BAR_HEIGHT, height)}px`;
+    barContainerStyle["width"] = `100%`;
+    barContainerStyle["border-radius"] = `${border_radius}px`;
+    const barStyle = {}; 
     barStyle["background-color"] = `rgb(${color})`;
     barStyle["width"] = `${percent}%`;
     return html`
@@ -111,11 +115,11 @@ class BarSensorCard extends LitElement {
       return html``;
     }
 
-    const barContainerStyle = {} 
+    const barContainerStyle = {}; 
     barContainerStyle["background-color"] = `rgba(${color}, 0.2)`; 
-    barContainerStyle["height"] = `${height}px`
-    barContainerStyle["border-radius"] = `${border_radius}px`
-    const barStyle = {} 
+    barContainerStyle["height"] = `${height}px`;
+    barContainerStyle["border-radius"] = `${border_radius}px`;
+    const barStyle = {}; 
     barStyle["background-color"] = `rgb(${color})`;
     barStyle["width"] = `${percent}%`;
     return html`
@@ -135,20 +139,20 @@ class BarSensorCard extends LitElement {
     const entity = this._hass.states?.[this.config?.entity];
     if (!entity) return html`<ha-card><div class="card">Entity not found: ${this.config.entity}</div></ha-card>`;
 
-    const display_mode = DISPLAY_MODES.includes(this.config?.display_mode)? this.config.display_mode: DM_BOTH
-    const show_icon = [DM_BOTH, DM_ICON].includes(display_mode)
-    const show_bar = [DM_BOTH, DM_BAR].includes(display_mode)
+    const display_mode = DISPLAY_MODES.includes(this.config?.display_mode)? this.config.display_mode: DM_BOTH;
+    const show_icon = [DM_BOTH, DM_ICON].includes(display_mode);
+    const show_bar = [DM_BOTH, DM_BAR].includes(display_mode);
 
-    let display_value
-    let unit
-    let current_percent
-    let icon_color_key
-    let bar_color_key
+    let display_value;
+    let unit;
+    let current_percent;
+    let icon_color_key;
+    let bar_color_key;
 
     if (isActiveState(entity.state)) {
-      unit = getDisplayUnit(entity.attributes?.unit_of_measurement || "")
+      unit = getDisplayUnit(entity.attributes?.unit_of_measurement || "");
       const decimals = Number.isInteger(this.config?.decimals) ? this.config.decimals : DEFAULT_DECIMALS;
-      display_value = getDisplayValue(entity.state, decimals)
+      display_value = getDisplayValue(entity.state, decimals);
 
       const min = this.config?.min ?? DEFAULT_MIN_VALUE;
       const max = this.config?.max ?? DEFAULT_MAX_VALUE;
@@ -163,30 +167,35 @@ class BarSensorCard extends LitElement {
       const enable_dynamic_bar_color = !!this.config?.enable_dynamic_bar_color;
       bar_color_key = enable_dynamic_bar_color ? dynamic_color_key : this.config?.bar_color || this.config?.color || "var(--rgb-accent-color)";
     } else {
-      display_value = entity.state
-      unit = ""
-      current_percent = 0
-      icon_color_key = "var(--rgb-disabled)"
-      bar_color_key = "var(--rgb-disabled)"
+      display_value = entity.state;
+      unit = "";
+      current_percent = 0;
+      icon_color_key = "var(--rgb-disabled)";
+      bar_color_key = "var(--rgb-disabled)";
     } 
         
-    const stateHtml = this._render_state(this.config?.title || entity.attributes?.friendly_name, display_value, unit, this.config.show_value_inline)
+    const stateHtml = this._render_state(this.config?.title || entity.attributes?.friendly_name, display_value, unit, this.config.show_value_inline);
 
-    let iconHtml
+    let iconHtml;
     if (show_icon) {
       const icon = this.config?.icon || entity.attributes?.icon || selectSensorIcon(entity?.attributes?.device_class, current_percent);
       const icon_color = computeRgbColor(icon_color_key);
       iconHtml = this._render_icon(icon, icon_color);
     } else {
-      iconHtml = ""
+      iconHtml = "";
     }
 
-    let rightBarHtml
-    let bottomBarHtml
+    let rightBarHtml;
+    let bottomBarHtml;
+    const contentStyle = {}
     
     if (show_bar) {
-      const bar_color = computeRgbColor(bar_color_key)
-      const bar_position = BAR_POSITIONS.includes(this.config?.bar_position)? this.config?.bar_position: BP_BOTTOM
+
+      const bar_color = computeRgbColor(bar_color_key);
+      const bar_position = BAR_POSITIONS.includes(this.config?.bar_position)? this.config?.bar_position: BP_BOTTOM;
+      if (bar_position==BP_RIGHT) {
+        contentStyle["justify-content"] = "space-between"
+      }
       rightBarHtml = this._render_right_bar(
         current_percent, 
         bar_color, 
@@ -202,13 +211,13 @@ class BarSensorCard extends LitElement {
         this.config?.bar_border_radius || DEFAULT_BAR_BORDER_RADIUS,
       );
     } else {
-      rightBarHtml = ""
-      bottomBarHtml = ""
+      rightBarHtml = "";
+      bottomBarHtml = "";
     }
 
     return html`
       <ha-card class="bar-sensor-card" @click=${() => this._handleBarClick(this.config?.entity)}>
-        <div class="content">
+        <div class="content" style="${styleMap(contentStyle)}">
           ${iconHtml}
           ${stateHtml}
           ${rightBarHtml}
@@ -265,24 +274,20 @@ class BarSensorCard extends LitElement {
         height: 37px;
         border-radius: 50%;
         display: flex;
+        flex-shrink: 0;
         align-items: center;
         justify-content: center;
-        background-color: var(--shape-color);
-        flex-shrink: 0;
       }
       .icon-wrapper ha-icon {
-        color: var(--icon-color);
         width: 24px;
         height: 24px;
       }
       .info {
-        display: flex;   
-        flex: 1 1 0;               
-        min-width: 0;                  
+        display: flex;                
+        min-width: 0;           
       }
-      .info .primary {
-        flex: 1 1 auto;               
-        min-width: 0;             
+      .info .primary {            
+        max-width: 100%;            
         overflow: hidden;          
         text-overflow: ellipsis;   
         white-space: nowrap;       
@@ -295,7 +300,6 @@ class BarSensorCard extends LitElement {
         flex: 0 0 auto;                
         line-height: 15px;
         color: var(--primary-text-color, #fff);
-        padding: 0 4px 0 0;
       }
       .bottom-bar-wrapper {
         padding: 0px 12px 12px 12px
@@ -303,8 +307,8 @@ class BarSensorCard extends LitElement {
       .right-bar-wrapper {
         flex: 1;
         min-width: 50%;
+        max-width: 50%;
         display: flex;
-        align-items: center;
       }
       .bar-container {
         overflow: hidden;
