@@ -299,7 +299,7 @@ class BarSensorCard extends LitElement {
         padding: 0px 12px 12px 12px
       }
       .right-bar-wrapper {
-        flex: 1;
+        flex: 0 0 50%;
         min-width: 50%;
         display: flex;
         align-items: center;
