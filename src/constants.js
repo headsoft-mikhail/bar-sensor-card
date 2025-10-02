@@ -1,7 +1,3 @@
-export const LitElement = Object.getPrototypeOf(customElements.get("ha-panel-lovelace"));
-export const html = LitElement.prototype.html;
-export const css = LitElement.prototype.css;
-
 export const COLORS = [
   "primary","accent","red","pink","purple","deep-purple","indigo","blue","light-blue",
   "cyan","teal","green","light-green","lime","yellow","amber","orange","deep-orange",
@@ -21,6 +17,10 @@ export const DISPLAY_MODES = [DM_BOTH, DM_ICON, DM_BAR]
 export const BP_BOTTOM = "bottom"
 export const BP_RIGHT = "right"
 export const BAR_POSITIONS = [BP_BOTTOM, BP_RIGHT]
+
+export const AT_MORE_INFO = "more-info"
+export const AT_PERFORM_ACTION = "perform-action"
+export const ACTION_TYPES = [AT_MORE_INFO, AT_PERFORM_ACTION]
 
 export const DEFAULT_MIN_VALUE = 0 
 export const DEFAULT_MAX_VALUE = 100

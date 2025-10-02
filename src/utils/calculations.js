@@ -1,7 +1,7 @@
 import {
   COLORS,
   PALETTES,
-} from "./constants.js"
+} from "../constants.js"
 
 export function isActiveState(state) {
   if (["unavailable", "unknown", "off"].includes(state)) {
@@ -75,7 +75,6 @@ export function getDisplayUnit(u) {
   }
   return " " + u
 }
-
 
 export function selectSensorIcon(device_class, current_percent) {
   switch (device_class) {
