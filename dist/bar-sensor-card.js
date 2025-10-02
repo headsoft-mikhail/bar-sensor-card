@@ -370,6 +370,7 @@ class BarSensorCard extends LitElement {
         align-items: center;
         gap: 10px;
         padding: 10px 10px;
+        min-width: 0;
       }
       .icon-wrapper {
         width: 37px;
@@ -392,7 +393,8 @@ class BarSensorCard extends LitElement {
         min-width: 0;                  
       }
       .info .primary {
-        flex: 1 1 auto;              
+        flex: 1 1 auto;               
+        min-width: 0;             
         overflow: hidden;          
         text-overflow: ellipsis;   
         white-space: nowrap;       
@@ -411,7 +413,7 @@ class BarSensorCard extends LitElement {
         padding: 0px 12px 12px 12px
       }
       .right-bar-wrapper {
-        flex: 0 0 50%;
+        flex: 1;
         min-width: 50%;
         display: flex;
         align-items: center;
