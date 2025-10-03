@@ -24,6 +24,8 @@ const BAR_POSITIONS = [BP_BOTTOM, BP_RIGHT];
 
 const AT_MORE_INFO = "more-info";
 const AT_PERFORM_ACTION = "perform-action";
+const ACTION_TYPES = [AT_MORE_INFO, AT_PERFORM_ACTION];
+const DEFAULT_TAP_ACTION = { action: AT_MORE_INFO };
 
 const DEFAULT_MIN_VALUE = 0; 
 const DEFAULT_MAX_VALUE = 100;
@@ -37,13 +39,20 @@ const VALUE_FONT_SIZE_COLUMN = 12;
 const handleAction = (node, hass, config, actionType) => {
   if (!config) return;
 
-  const actionConfig = actionType === "tap" 
-  ? config.tap_action || { action: AT_MORE_INFO } 
-  : config.hold_action;
+  let actionConfig;
+  switch (actionType) {
+    case "tap":
+      actionConfig = config.tap_action || DEFAULT_TAP_ACTION;
+      break;
+    case "hold":
+      actionConfig = config.hold_action;
+      break;
+    default:
+      return;
+  }
   if (!actionConfig) return;
 
   const { action } = actionConfig;
-
   switch (action) {
     case AT_MORE_INFO: {
       const entityId = actionConfig.entity || config.entity;
@@ -92,6 +101,16 @@ const cancelHold = (state) => {
   }
 };
 
+const isTapActionEnabled = (config) => {
+  const tap = config.tap_action || DEFAULT_TAP_ACTION;
+  return ACTION_TYPES.includes(tap.action);
+};
+
+const isHoldActionEnabled = (config) => {
+  const hold = config.hold_action;
+  return hold && ACTION_TYPES.includes(hold.action);
+};
+
 const onPressStart = (event, node, hass, config, state) => {
   const { x, y } = getStartCoords(event);
   state.startX = x;
@@ -99,7 +118,7 @@ const onPressStart = (event, node, hass, config, state) => {
   state.held = false;
   state.scrolling = false;
 
-  if (config.hold_action) {
+  if (isTapActionEnabled(config) || isHoldActionEnabled(config)) {
     state.holdTimeout = handleHold(node, hass, config, state.holdTime, () => {
       state.held = true;
     });
@@ -120,7 +139,7 @@ const onPressEnd = (event, node, hass, config, state) => {
   const { x: endX, y: endY } = getEndCoords(event);
   if (state.scrolling || detectScroll(state.startX, state.startY, endX, endY)) return;
 
-  if (!state.held) handleTap(node, hass, config);
+  if (!state.held && isTapActionEnabled(config)) handleTap(node, hass, config);
 };
 
 const handleTap = (node, hass, config) => {

@@ -21,6 +21,7 @@ export const BAR_POSITIONS = [BP_BOTTOM, BP_RIGHT]
 export const AT_MORE_INFO = "more-info"
 export const AT_PERFORM_ACTION = "perform-action"
 export const ACTION_TYPES = [AT_MORE_INFO, AT_PERFORM_ACTION]
+export const DEFAULT_TAP_ACTION = { action: AT_MORE_INFO }
 
 export const DEFAULT_MIN_VALUE = 0 
 export const DEFAULT_MAX_VALUE = 100
