@@ -35,45 +35,104 @@ const handleAction = (node, hass, config, actionType) => {
   }
 };
 
+const getStartCoords = (event) => {
+  if (event.touches && event.touches.length > 0) {
+    return { x: event.touches[0].clientX, y: event.touches[0].clientY };
+  }
+  return { x: event.clientX, y: event.clientY };
+};
+
+const getEndCoords = (event) => {
+  if (event.changedTouches && event.changedTouches.length > 0) {
+    return { x: event.changedTouches[0].clientX, y: event.changedTouches[0].clientY };
+  }
+  return { x: event.clientX, y: event.clientY };
+};
+
+const detectScroll = (startX, startY, endX, endY, tolerance = 10) => {
+  const dx = Math.abs(endX - startX);
+  const dy = Math.abs(endY - startY);
+  return dx > tolerance || dy > tolerance;
+};
+
+const cancelHold = (state) => {
+  if (state.holdTimeout) {
+    clearTimeout(state.holdTimeout);
+    state.holdTimeout = null;
+  }
+};
+
+const onPressStart = (event, node, hass, config, state) => {
+  const { x, y } = getStartCoords(event);
+  state.startX = x;
+  state.startY = y;
+  state.held = false;
+  state.scrolling = false;
+
+  if (config.hold_action) {
+    state.holdTimeout = handleHold(node, hass, config, state.holdTime, () => {
+      state.held = true;
+    });
+  }
+};
+
+const onPressMove = (event, state) => {
+  const { x, y } = getEndCoords(event);
+  if (detectScroll(state.startX, state.startY, x, y)) {
+    state.scrolling = true;
+    cancelHold(state);
+  }
+};
+
+const onPressEnd = (event, node, hass, config, state) => {
+  cancelHold(state);
+
+  const { x: endX, y: endY } = getEndCoords(event);
+  if (state.scrolling || detectScroll(state.startX, state.startY, endX, endY)) return;
+
+  if (!state.held) handleTap(node, hass, config);
+};
+
+const handleTap = (node, hass, config) => {
+  handleAction(node, hass, config, "tap");
+};
+
+const handleHold = (node, hass, config, holdTime, onHeld) => {
+  return setTimeout(() => {
+    handleAction(node, hass, config, "hold");
+    onHeld();
+  }, holdTime);
+};
+
 export const actionHandler = (node, hass, config) => {
   if (!node) return;
 
-  let holdTimeout;
-  let held = false;
-  const holdTime = config.hold_time ?? 500;
-
-  const start = () => {
-    if (!config.hold_action) return;
-    held = false;
-    holdTimeout = setTimeout(() => {
-      handleAction(node, hass, config, "hold");
-      held = true;
-    }, holdTime);
+  const state = {
+    holdTimeout: null,
+    held: false,
+    scrolling: false,
+    startX: 0,
+    startY: 0,
+    holdTime: config.hold_time ?? 500,
   };
 
-  const clear = () => {
-    if (holdTimeout) {
-      clearTimeout(holdTimeout);
-      holdTimeout = null;
-    }
-  };
+  node.addEventListener("mousedown", (event) =>
+    onPressStart(event, node, hass, config, state)
+  );
+  node.addEventListener("mousemove", (event) => onPressMove(event, state));
+  node.addEventListener("mouseup", (event) =>
+    onPressEnd(event, node, hass, config, state)
+  );
+  node.addEventListener("mouseleave", () => cancelHold(state));
 
-  node.addEventListener("mousedown", start);
-  node.addEventListener("mouseup", () => {
-    clear();
-    if (!held) {
-      handleAction(node, hass, config, "tap");
-    }
+  node.addEventListener("touchstart", (event) =>
+    onPressStart(event, node, hass, config, state),
+    { passive: true }
+  );
+  node.addEventListener("touchmove", (event) => onPressMove(event, state), { passive: true });
+  node.addEventListener("touchend", (event) => {
+    onPressEnd(event, node, hass, config, state);
+    event.preventDefault();
   });
-  node.addEventListener("mouseleave", clear);
-
-  node.addEventListener("touchstart", start);
-  node.addEventListener("touchend", (ev) => {
-    clear();
-    if (!held) {
-      handleAction(node, hass, config, "tap");
-    }
-    ev.preventDefault();
-  });
-  node.addEventListener("touchcancel", clear);
+  node.addEventListener("touchcancel", () => cancelHold(state));
 };
