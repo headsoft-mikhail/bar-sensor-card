@@ -7,6 +7,7 @@ export const COLORS = [
 export const PALETTES = {
   "red_to_green": ["red","deep-orange","orange","amber","yellow","lime","light-green","green"],
   "green_to_red": ["green","light-green","lime","yellow","amber","orange","deep-orange","red"],
+  "red_green_red": ["red","deep-orange","amber","lime","green","lime","amber","deep-orange","red"],
 }
 
 export const DM_BOTH = "both"

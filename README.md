@@ -91,6 +91,7 @@ The following palettes are available in `constants.js`:
 
 - `red_to_green`
 - `green_to_red`
+- `red_green_red`
 
 ---
 
